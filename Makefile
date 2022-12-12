@@ -29,7 +29,7 @@ $(LINUX_PATH):
 build: build-u-boot build-linux
 build-u-boot: $(UBOOT_PATH)/.config
 	cd $(UBOOT_PATH); \
-	$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILER) -j$(NPROC) BL31=../build/prebuilt/rk3588_bl31_v1.27.elf spl/u-boot-spl.bin u-boot.dtb u-boot.itb
+	$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILER) -j$(NPROC) BL31=../build/prebuilt/rk3588_bl31_v1.27.elf u-boot.dtb u-boot.itb
 
 $(UBOOT_PATH)/.config: $(UBOOT_PATH)/configs/rk3588_defconfig
 	cd $(UBOOT_PATH); \
@@ -50,8 +50,8 @@ build-compiler: config/aarch64-linux-gnu-config.mk
 .PHONY: image
 image: boot.img linux.img
 
-loader1.img: $(UBOOT_PATH)/spl/u-boot-spl.bin
-	mkimage -n rk3588 -T rksd -d prebuilt/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin:$(UBOOT_PATH)/spl/u-boot-spl.bin $@
+loader1.img:
+	mkimage -n rk3588 -T rksd -d prebuilt/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin:prebuilt/u-boot-spl.bin $@
 
 boot.img: loader1.img $(UBOOT_PATH)/u-boot.itb
 	dd if=/dev/zero of=$@ bs=1M count=0 seek=16
