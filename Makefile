@@ -65,10 +65,10 @@ build-rkdeveloptool:
 image: image/boot.img image/linux.img
 
 image/u-boot.scr: config/u-boot-script.txt
-	$(UBOOT_PATH)/tools/mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n "My script" -d $^ $@
+	$(UBOOT_PATH)/tools/mkimage -A arm -O arm-trusted-firmware -T script -C none -a 0 -e 0 -n "My script" -d $^ $@
 
 image/loader1.img: $(UBOOT_PATH)/spl/u-boot-spl.bin prebuilt/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin
-	$(UBOOT_PATH)/tools/mkimage -n rk3588 -T rksd -d prebuilt/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin:$(UBOOT_PATH)/spl/u-boot-spl.bin $@
+	$(UBOOT_PATH)/tools/mkimage -O arm-trusted-firmware -n rk3588 -T rksd -d prebuilt/rk3588_ddr_lp4_2112MHz_lp5_2736MHz_v1.08.bin:$(UBOOT_PATH)/spl/u-boot-spl.bin $@
 
 image/boot.img: image/loader1.img $(UBOOT_PATH)/u-boot.itb
 	dd if=/dev/zero of=$@ bs=1M count=0 seek=16
@@ -106,11 +106,6 @@ flash-boot: image/boot.img
 
 .PHONY: flash-boot-debug
 flash-boot-debug: rock-5b-spi-image-g3caf61a44c2-debug.img
-	sudo $(RKDEVELOPTOOL_PATH)/rkdeveloptool db prebuilt/rk3588_spl_loader_v1.08.111.bin
-	sudo $(RKDEVELOPTOOL_PATH)/rkdeveloptool wl 0 $^
-
-.PHONY: flash-boot-debug2
-flash-boot-debug2: rock-5b-spi-image-g49da44e116d.img
 	sudo $(RKDEVELOPTOOL_PATH)/rkdeveloptool db prebuilt/rk3588_spl_loader_v1.08.111.bin
 	sudo $(RKDEVELOPTOOL_PATH)/rkdeveloptool wl 0 $^
 
